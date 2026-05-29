@@ -1,0 +1,96 @@
+import Makwa,KDF
+
+#1
+input = bytes.fromhex("")
+expected = 'c3bf6a81dda5b85c626a582fdaf855cb7085ee308c8976954544afe814cca1a3216699aaa568113d5b29810a9b8364425bb88988c0a55f10324bdf77c1ef6261911d30ffc932422a0ceaec4a4586b86fadbc0cc98bff8d8fc2834a5f32f22915325b8619'
+print(f'result: {KDF.kdf(input,100).hex()}')
+print(expected == KDF.kdf(input,100).hex())
+
+#32
+input = bytes.fromhex("1c6fc215")
+print(f'result: {KDF.kdf(input,100).hex()}')
+expected = '0c949bcff60c9151e0fbd32f247d5ed54fbe0b7620b7ada39bc259da855b6e46a885e07ba477ae87b7ce22fa4a80680007e11541c24ebcfa60b78a9eb14a958760e0b25904dbc516f97d378e662ce617a0e318c984e054045548fe867917eae3bded1110'
+print(expected == KDF.kdf(input,100).hex())
+
+# 121
+input = bytes.fromhex("69bc0f62b5085bae0154a7fa4da0f3")
+print(f'result: {KDF.kdf(input,100).hex()}')
+expected = 'f66ebcce5a3efcd7e92a932db87269385d430a3786e7904936dae8ceaac57dfafaf8473fb759abe38855a3fbdf5bca4bab6080774c30adab4b96b92206655d27b444aa0fbf0fad58bfcb89c3f9ea8c9c9b875282f9b3b717012c9f81320ee3ad0f2b48d6'
+print(expected == KDF.kdf(input,100).hex())
+
+# 1552
+input = "4ea1f4479aed4093e6398cdf3285d82b7ed12477ca1d70c31669bc0f62b5085bae0154a7fa4da0f34699ec3f92e5388bde3184d72a7dd02376c91c6fc21568bb0e61b4075aad0053a6f94c9ff24598eb3e91e4378add3083d6297ccf2275c81b6ec11467ba0d60b30659acff52a5f84b9ef14497ea3d90e33689dc2f82d5287bce2174c71a6dc01366b90c5fb20558abfe51a4f74a9df04396e93c8fe23588db2e81d4277acd2073c6196cbf1265b80b5eb10457aafd50a3f6499cef4295e83b8ee1"
+input = bytes.fromhex(input)
+print(f'result: {KDF.kdf(input,100).hex()}')
+expected = '0fbae851cea1d0925e6f3ff4c811b7cb877f3594c86ea49d50d6da81a681ead9d70aaff4079715ab9925bf1a8beabcadf76fd7770ec5e2a040153826b98d91de5091ff306168958e3efa77f2f93078686b63b18e0e54a8f0ae1bbdb71dac0bff5d5f0b48'
+print(expected == KDF.kdf(input,100).hex())
+
+# Główny test
+sigma = "c72703c22a96d9992f3dea876497e392"
+salt = bytes.fromhex(sigma)
+message = "Gego beshwaji'aaken awe makwa; onzaam naniizaanizi."
+print(message.encode("utf-8").hex())
+n = "C22C40BBD056BB213AAD7C830519101AB926AE18E3E9FC9699C806E0AE5C259414A01AC1D52E873EC08046A68E344C8D74A508952842EF0F03F71A6EDC077FAA14899A79F83C3AE136F774FA6EB88F1D1AEA5EA02FC0CCAF96E2CE86F3490F4993B4B566C0079641472DEFC14BECCF48984A7946F1441EA144EA4C802A457550BA3DF0F14C090A75FE9E6A77CF0BE98B71D56251A86943E719D27865A489566C1DC57FCDEFACA6AB043F8E13F6C0BE7B39C92DA86E1D87477A189E73CE8E311D3D51361F8B00249FB3D8435607B14A1E70170F9AF36784110A3F2E67428FC18FB013B30FE6782AECB4428D7C8E354A0FBD061B01917C727ABEE0FE3FD3CEF761"
+N = int(n, 16)
+preHashing = False
+postHashing = 12
+w = 4096
+expected = "C9CEA0E6EF09393AB1710A08"
+print(Makwa.makwa_verify(message,salt,w,postHashing,preHashing,N,expected))
+
+
+# Inny test z wektorów testowych
+sigma = "e238172514cab357b150ec32726e70ac"
+salt = bytes.fromhex(sigma)
+message = 'b1b2b3b4b5b6b7b8b9babbbcbd'
+message = bytes.fromhex(message)
+n = "c22c40bbd056bb213aad7c830519101ab926ae18e3e9fc9699c806e0ae5c259414a01ac1d52e873ec08046a68e344c8d74a508952842ef0f03f71a6edc077faa14899a79f83c3ae136f774fa6eb88f1d1aea5ea02fc0ccaf96e2ce86f3490f4993b4b566c0079641472defc14beccf48984a7946f1441ea144ea4c802a457550ba3df0f14c090a75fe9e6a77cf0be98b71d56251a86943e719d27865a489566c1dc57fcdefaca6ab043f8e13f6c0be7b39c92da86e1d87477a189e73ce8e311d3d51361f8b00249fb3d8435607b14a1e70170f9af36784110a3f2e67428fc18fb013b30fe6782aecb4428d7c8e354a0fbd061b01917c727abee0fe3fd3cef761"
+N = int(n, 16)
+preHashing = False
+postHashing = 25
+w = 4096
+print(Makwa.makwa_hash(message,salt,w,postHashing,preHashing,N))
+expected = "201979e5d876e02cdc65a999a0f002cc4afb2cf99b0e8d9fb4"
+print(Makwa.makwa_verify(message,salt,w,postHashing,preHashing,N,expected))
+
+#
+sigma = "e238172514cab357b150ec32726e70ac"
+salt = bytes.fromhex(sigma)
+message = 'b1b2b3b4b5b6b7b8b9babbbcbd'
+message = bytes.fromhex(message)
+n = "c22c40bbd056bb213aad7c830519101ab926ae18e3e9fc9699c806e0ae5c259414a01ac1d52e873ec08046a68e344c8d74a508952842ef0f03f71a6edc077faa14899a79f83c3ae136f774fa6eb88f1d1aea5ea02fc0ccaf96e2ce86f3490f4993b4b566c0079641472defc14beccf48984a7946f1441ea144ea4c802a457550ba3df0f14c090a75fe9e6a77cf0be98b71d56251a86943e719d27865a489566c1dc57fcdefaca6ab043f8e13f6c0be7b39c92da86e1d87477a189e73ce8e311d3d51361f8b00249fb3d8435607b14a1e70170f9af36784110a3f2e67428fc18fb013b30fe6782aecb4428d7c8e354a0fbd061b01917c727abee0fe3fd3cef761"
+N = int(n, 16)
+preHashing = True
+postHashing = 25
+w = 4096
+print(Makwa.makwa_hash(message,salt,w,postHashing,preHashing,N))
+expected = "521313a1e616c6762c37e4ccba74620bb3c51b3b34300a7e1a"
+print(Makwa.makwa_verify(message,salt,w,postHashing,preHashing,N,expected))
+
+#
+sigma = "312444b683889e945ed4472649e16a0d"
+salt = bytes.fromhex(sigma)
+message = "cdefghijklmno"
+n = "c22c40bbd056bb213aad7c830519101ab926ae18e3e9fc9699c806e0ae5c259414a01ac1d52e873ec08046a68e344c8d74a508952842ef0f03f71a6edc077faa14899a79f83c3ae136f774fa6eb88f1d1aea5ea02fc0ccaf96e2ce86f3490f4993b4b566c0079641472defc14beccf48984a7946f1441ea144ea4c802a457550ba3df0f14c090a75fe9e6a77cf0be98b71d56251a86943e719d27865a489566c1dc57fcdefaca6ab043f8e13f6c0be7b39c92da86e1d87477a189e73ce8e311d3d51361f8b00249fb3d8435607b14a1e70170f9af36784110a3f2e67428fc18fb013b30fe6782aecb4428d7c8e354a0fbd061b01917c727abee0fe3fd3cef761"
+N = int(n, 16)
+preHashing = False
+postHashing = 22
+w = 384
+print(Makwa.makwa_hash(message,salt,w,postHashing,preHashing,N))
+x = "89bd2749c2932f8184e8ee8e5f4c3565462b745d4fd5"
+print(Makwa.makwa_verify(message,salt,w,postHashing,preHashing,N,x))
+
+#
+sigma = "b82cb42e3a2dfc2ad60b8b76c666b015"
+salt = bytes.fromhex(sigma)
+message = 'bebfc0c1c2c3c4c5c6c7c8c9ca'
+message = bytes.fromhex(message)
+n = "c22c40bbd056bb213aad7c830519101ab926ae18e3e9fc9699c806e0ae5c259414a01ac1d52e873ec08046a68e344c8d74a508952842ef0f03f71a6edc077faa14899a79f83c3ae136f774fa6eb88f1d1aea5ea02fc0ccaf96e2ce86f3490f4993b4b566c0079641472defc14beccf48984a7946f1441ea144ea4c802a457550ba3df0f14c090a75fe9e6a77cf0be98b71d56251a86943e719d27865a489566c1dc57fcdefaca6ab043f8e13f6c0be7b39c92da86e1d87477a189e73ce8e311d3d51361f8b00249fb3d8435607b14a1e70170f9af36784110a3f2e67428fc18fb013b30fe6782aecb4428d7c8e354a0fbd061b01917c727abee0fe3fd3cef761"
+N = int(n, 16)
+preHashing = True
+postHashing = -1
+w = 384
+print(Makwa.makwa_hash(message,salt,w,postHashing,preHashing,N))
+x = "b4d0ccb2860228c320cc11bd9e95a37903584908ec1785036de8adcd4d25949375b86e8741ee1700e2fc42632c60397ff9308d0aee6e39848be3d1336c03279438bd9770cc222d8f6dc57972b7f2cdaa2ed3c8ac30ae506f793ba9a9aa53afefa5a66258f86afaeb1a0eee886ce105e679e76264a4c6f9ddba18737c5705569b1a7e498fe8cd9f1c10233a959e2d6f7957d4d6b5e98c8ed89766878c9537c9311d07ad4fd346b2b1a6d3aac4521d32334a078d1a93d9c810a8e6d0998faa19bf72c49411962f4bd21ebce8a679483958b424f462249d54373984c2c04cbc323dc29a26ba0cbf4b8e5047b2d272160516eafac8093e29063abcc5c1856ac60d46"
+print(Makwa.makwa_verify(message,salt,w,postHashing,preHashing,N,x))
+
